@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -27,6 +27,8 @@ const Sidebar = ({
   userEmail = "john.doe@example.com",
   userAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
 }: SidebarProps) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
     <div className="w-[280px] h-full bg-background border-r flex flex-col">
       {/* User Profile Section */}
@@ -72,10 +74,11 @@ const Sidebar = ({
           icon={<Code size={18} />}
           label="Challenges"
           to="/challenges"
+          isActive={currentPath === "/challenges"}
         />
         <NavItem
           icon={<BookOpen size={18} />}
-          label="Daily Blogs"
+          label="Blogs & Workshops"
           to="/blogs"
         />
         <NavItem
@@ -107,12 +110,23 @@ interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   to: string;
+  isActive?: boolean;
 }
 
-const NavItem = ({ icon, label, to }: NavItemProps) => {
+const NavItem = ({
+  icon,
+  label,
+  to,
+  isActive: forcedActive = false,
+}: NavItemProps) => {
+  const location = useLocation();
+  const isActive = forcedActive || location.pathname === to;
   return (
     <Link to={to} className="block">
-      <Button variant="ghost" className="w-full justify-start">
+      <Button
+        variant="ghost"
+        className={`w-full justify-start ${isActive ? "bg-accent text-accent-foreground" : ""}`}
+      >
         <span className="mr-2">{icon}</span>
         {label}
       </Button>

@@ -3,6 +3,8 @@ import { useRoutes, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
 import routes from "tempo-routes";
 import Layout from "./components/layout";
+import Challenges from "./components/dashboard/Challenges";
+import Blogs from "./components/blog/Blogs";
 
 // Lazy load routes for better performance
 const TopicGrid = lazy(() => import("./components/dashboard/TopicGrid"));
@@ -62,7 +64,11 @@ function App() {
             path="/challenges"
             element={
               <Layout>
-                <div className="p-6">Challenges coming soon</div>
+                <Suspense
+                  fallback={<div className="p-6">Loading challenges...</div>}
+                >
+                  <Challenges />
+                </Suspense>
               </Layout>
             }
           />
@@ -70,7 +76,11 @@ function App() {
             path="/blogs"
             element={
               <Layout>
-                <div className="p-6">Blogs coming soon</div>
+                <Suspense
+                  fallback={<div className="p-6">Loading blogs...</div>}
+                >
+                  <Blogs />
+                </Suspense>
               </Layout>
             }
           />

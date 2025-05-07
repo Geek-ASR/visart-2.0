@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,12 +13,107 @@ interface CodeEditorProps {
   difficulty?: "easy" | "medium" | "hard";
 }
 
-const CodeEditor = ({
-  problemId = "1",
-  problemTitle = "Two Sum",
-  problemDescription = "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
-  difficulty = "easy",
-}: CodeEditorProps) => {
+const MOCK_PROBLEMS = [
+  {
+    id: "1",
+    title: "Two Sum",
+    description:
+      "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+    difficulty: "easy",
+    testCases: [
+      { input: "nums = [2,7,11,15], target = 9", expectedOutput: "[0,1]" },
+      { input: "nums = [3,2,4], target = 6", expectedOutput: "[1,2]" },
+      { input: "nums = [3,3], target = 6", expectedOutput: "[0,1]" },
+    ],
+    starterCode: `function twoSum(nums, target) {\n  // Write your solution here\n  \n}`,
+  },
+  {
+    id: "2",
+    title: "Missing Numbers in Array",
+    description:
+      "Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.",
+    difficulty: "easy",
+    testCases: [
+      { input: "nums = [3,0,1]", expectedOutput: "2" },
+      { input: "nums = [0,1]", expectedOutput: "2" },
+      { input: "nums = [9,6,4,2,3,5,7,0,1]", expectedOutput: "8" },
+    ],
+    starterCode: `function missingNumber(nums) {\n  // Write your solution here\n  \n}`,
+  },
+  {
+    id: "3",
+    title: "Second Largest in Array",
+    description:
+      "Given an array of integers, find the second largest element in the array.",
+    difficulty: "medium",
+    testCases: [
+      { input: "nums = [12, 35, 1, 10, 34, 1]", expectedOutput: "34" },
+      { input: "nums = [10, 5, 10]", expectedOutput: "5" },
+      { input: "nums = [10, 10, 10]", expectedOutput: "-1" },
+    ],
+    starterCode: `function findSecondLargest(nums) {\n  // Write your solution here\n  \n}`,
+  },
+  {
+    id: "4",
+    title: "Binary Search",
+    description:
+      "Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.",
+    difficulty: "easy",
+    testCases: [
+      { input: "nums = [-1,0,3,5,9,12], target = 9", expectedOutput: "4" },
+      { input: "nums = [-1,0,3,5,9,12], target = 2", expectedOutput: "-1" },
+      { input: "nums = [5], target = 5", expectedOutput: "0" },
+    ],
+    starterCode: `function search(nums, target) {\n  // Write your solution here\n  \n}`,
+  },
+  {
+    id: "5",
+    title: "Remove Loop from Linked List",
+    description:
+      "Given a linked list, detect and remove a loop if present in the linked list.",
+    difficulty: "medium",
+    testCases: [
+      { input: "head = [1,2,3,4,2]", expectedOutput: "[1,2,3,4]" },
+      { input: "head = [1,2,3,4,5,6,3]", expectedOutput: "[1,2,3,4,5,6]" },
+      { input: "head = [1,2,3,4]", expectedOutput: "[1,2,3,4]" },
+    ],
+    starterCode: `function removeLoop(head) {\n  // Write your solution here\n  // Note: This is a representation of linked list with a loop\n  // The actual implementation would be different\n  \n}`,
+  },
+];
+
+const CodeEditor = () => {
+  const { id } = useParams();
+  const [problemId, setProblemId] = useState(id || "1");
+  const [problemTitle, setProblemTitle] = useState("Two Sum");
+  const [problemDescription, setProblemDescription] = useState(
+    "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+  );
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">(
+    "easy",
+  );
+  const [testCases, setTestCases] = useState([
+    { input: "nums = [2,7,11,15], target = 9", expectedOutput: "[0,1]" },
+    { input: "nums = [3,2,4], target = 6", expectedOutput: "[1,2]" },
+    { input: "nums = [3,3], target = 6", expectedOutput: "[0,1]" },
+  ]);
+
+  useEffect(() => {
+    // Find the problem by ID
+    const problem = MOCK_PROBLEMS.find((p) => p.id === problemId);
+    if (problem) {
+      setProblemTitle(problem.title);
+      setProblemDescription(problem.description);
+      setDifficulty(problem.difficulty as "easy" | "medium" | "hard");
+      setTestCases(problem.testCases);
+      setCode(problem.starterCode);
+    }
+  }, [problemId]);
+
+  useEffect(() => {
+    if (id) {
+      setProblemId(id);
+    }
+  }, [id]);
   const [code, setCode] = useState(
     `function twoSum(nums, target) {\n  // Write your solution here\n  \n}`,
   );
@@ -25,11 +121,7 @@ const CodeEditor = ({
   const [isRunning, setIsRunning] = useState(false);
   const [testsPassed, setTestsPassed] = useState<boolean | null>(null);
 
-  const testCases = [
-    { input: "nums = [2,7,11,15], target = 9", expectedOutput: "[0,1]" },
-    { input: "nums = [3,2,4], target = 6", expectedOutput: "[1,2]" },
-    { input: "nums = [3,3], target = 6", expectedOutput: "[0,1]" },
-  ];
+  // testCases are now set in the state
 
   const handleRunCode = () => {
     setIsRunning(true);
