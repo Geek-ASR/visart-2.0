@@ -57,8 +57,10 @@ const AuthForm = ({
 
       // Check for admin access
       if (email === "adityarekhe1030@gmail.com" && password === "Aditya@1030") {
-        // Admin login logic would go here
         console.log("Admin login successful");
+        // Redirect to admin dashboard
+        window.location.href = "/admin";
+        return;
       }
 
       // Simulate API call

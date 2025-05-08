@@ -59,11 +59,13 @@ const Sidebar = ({
           icon={<Bookmark size={18} />}
           label="Bookmarks"
           to="/bookmarks"
+          isActive={currentPath === "/bookmarks"}
         />
         <NavItem
           icon={<Trophy size={18} />}
           label="Leaderboard"
           to="/leaderboard"
+          isActive={currentPath === "/leaderboard"}
         />
         <NavItem
           icon={<FolderTree size={18} />}

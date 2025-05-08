@@ -13,6 +13,15 @@ const LearningProgress = lazy(
 );
 const TopicDetail = lazy(() => import("./components/dashboard/TopicDetail"));
 const CodeEditor = lazy(() => import("./components/dashboard/CodeEditor"));
+const Leaderboard = lazy(() => import("./components/dashboard/Leaderboard"));
+const Bookmarks = lazy(() => import("./components/dashboard/Bookmarks"));
+
+// Admin routes
+const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const AddQuestionForm = lazy(
+  () => import("./components/admin/AddQuestionForm"),
+);
 
 function App() {
   return (
@@ -48,7 +57,11 @@ function App() {
             path="/bookmarks"
             element={
               <Layout>
-                <div className="p-6">Bookmarks coming soon</div>
+                <Suspense
+                  fallback={<div className="p-6">Loading bookmarks...</div>}
+                >
+                  <Bookmarks />
+                </Suspense>
               </Layout>
             }
           />
@@ -56,7 +69,11 @@ function App() {
             path="/leaderboard"
             element={
               <Layout>
-                <div className="p-6">Leaderboard coming soon</div>
+                <Suspense
+                  fallback={<div className="p-6">Loading leaderboard...</div>}
+                >
+                  <Leaderboard />
+                </Suspense>
               </Layout>
             }
           />
@@ -98,6 +115,32 @@ function App() {
               <Layout>
                 <div className="p-6">Settings coming soon</div>
               </Layout>
+            }
+          />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <Suspense
+                fallback={<div className="p-6">Loading admin panel...</div>}
+              >
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </Suspense>
+            }
+          />
+          <Route
+            path="/admin/questions/add"
+            element={
+              <Suspense
+                fallback={<div className="p-6">Loading question form...</div>}
+              >
+                <AdminLayout>
+                  <AddQuestionForm />
+                </AdminLayout>
+              </Suspense>
             }
           />
         </Routes>
