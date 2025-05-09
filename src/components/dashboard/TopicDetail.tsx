@@ -12,6 +12,7 @@ import {
   FileText,
   Play,
   CheckCircle,
+  X,
 } from "lucide-react";
 import Layout from "../layout";
 import Quiz, { QuizQuestion } from "./Quiz";
@@ -33,6 +34,7 @@ interface TopicData {
   quizQuestions?: QuizQuestion[];
   quizCompleted?: boolean;
   quizScore?: number;
+  videoId: string;
 }
 
 const TopicDetail = ({ id: propId }: TopicDetailProps) => {
@@ -42,6 +44,8 @@ const TopicDetail = ({ id: propId }: TopicDetailProps) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showCheatSheet, setShowCheatSheet] = useState(false);
 
   // Load saved quiz state from localStorage on component mount
   useEffect(() => {
@@ -67,6 +71,16 @@ const TopicDetail = ({ id: propId }: TopicDetailProps) => {
             : id === "9"
               ? "Dynamic Programming"
               : "Data Structure Topic",
+    videoId:
+      id === "1"
+        ? "NTHVTY6w2Co" // Arrays and Strings
+        : id === "2"
+          ? "R9PTBwOzceo" // Linked Lists
+          : id === "3"
+            ? "wjI1WNcIntg" // Stacks and Queues
+            : id === "9"
+              ? "oBt53YbR9Kk" // Dynamic Programming
+              : "NTHVTY6w2Co", // Default video
     difficulty:
       id === "1" || id === "2"
         ? "basic"
@@ -338,12 +352,14 @@ const TopicDetail = ({ id: propId }: TopicDetailProps) => {
                 <Button
                   variant="outline"
                   className="w-full flex items-center justify-center gap-2"
+                  onClick={() => setShowVideo(true)}
                 >
                   <Play size={18} /> Watch Video Explanation
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full flex items-center justify-center gap-2"
+                  onClick={() => setShowCheatSheet(true)}
                 >
                   <FileText size={18} /> View Cheat Sheet
                 </Button>
@@ -392,6 +408,320 @@ const TopicDetail = ({ id: propId }: TopicDetailProps) => {
             </TabsList>
 
             <TabsContent value="learn" className="space-y-6">
+              {showVideo ? (
+                <Card className="bg-white">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Video Explanation: {topicData.title}</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowVideo(false)}
+                    >
+                      <X size={18} />
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="aspect-video w-full mb-4">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${topicData.videoId}`}
+                        title={`${topicData.title} Video Tutorial`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : null}
+
+              {showCheatSheet ? (
+                <Card className="bg-white">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Cheat Sheet: {topicData.title}</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowCheatSheet(false)}
+                    >
+                      <X size={18} />
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {id === "1" ? (
+                        // Arrays and Strings cheat sheet
+                        <>
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              1. Array Initialization and Basic Operations
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// Initialize arrays in JavaScript
+const emptyArray = [];
+const numbersArray = [1, 2, 3, 4, 5];
+const mixedArray = [1, 'hello', true, { name: 'John' }];
+
+// Accessing elements
+const firstElement = numbersArray[0]; // 1
+const lastElement = numbersArray[numbersArray.length - 1]; // 5
+
+// Modifying elements
+numbersArray[2] = 10; // [1, 2, 10, 4, 5]
+
+// Common array methods
+numbersArray.push(6);       // Add to end: [1, 2, 10, 4, 5, 6]
+numbersArray.pop();         // Remove from end: [1, 2, 10, 4, 5]
+numbersArray.unshift(0);    // Add to beginning: [0, 1, 2, 10, 4, 5]
+numbersArray.shift();       // Remove from beginning: [1, 2, 10, 4, 5]`}
+                              </code>
+                            </pre>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              2. Array Iteration and Transformation
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// Iterating through arrays
+const numbers = [1, 2, 3, 4, 5];
+
+// Using for loop
+for (let i = 0; i < numbers.length; i++) {
+  console.log(numbers[i]);
+}
+
+// Using forEach
+numbers.forEach(num => console.log(num));
+
+// Map: transform each element
+const doubled = numbers.map(num => num * 2); // [2, 4, 6, 8, 10]
+
+// Filter: keep elements that pass a test
+const evenNumbers = numbers.filter(num => num % 2 === 0); // [2, 4]
+
+// Reduce: accumulate values
+const sum = numbers.reduce((total, num) => total + num, 0); // 15
+
+// Find: get first element that passes test
+const firstEven = numbers.find(num => num % 2 === 0); // 2
+
+// Some: check if at least one element passes test
+const hasEven = numbers.some(num => num % 2 === 0); // true
+
+// Every: check if all elements pass test
+const allEven = numbers.every(num => num % 2 === 0); // false`}
+                              </code>
+                            </pre>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              3. String Operations
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// String creation and basic operations
+const str = "Hello, World!";
+
+// String length
+const length = str.length; // 13
+
+// Accessing characters
+const firstChar = str[0]; // 'H'
+const lastChar = str[str.length - 1]; // '!'
+
+// String methods
+const upperCase = str.toUpperCase(); // "HELLO, WORLD!"
+const lowerCase = str.toLowerCase(); // "hello, world!"
+
+// Substring extraction
+const sub1 = str.substring(0, 5); // "Hello"
+const sub2 = str.slice(7, 12); // "World"
+
+// String searching
+const position = str.indexOf("World"); // 7
+const includes = str.includes("Hello"); // true
+
+// String splitting
+const words = str.split(", "); // ["Hello", "World!"]
+
+// String replacement
+const newStr = str.replace("World", "JavaScript"); // "Hello, JavaScript!"`}
+                              </code>
+                            </pre>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              4. Two-Dimensional Arrays
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// Creating a 2D array (matrix)
+const matrix = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+];
+
+// Accessing elements
+const element = matrix[1][2]; // 6 (row 1, column 2)
+
+// Iterating through a 2D array
+for (let i = 0; i < matrix.length; i++) {
+  for (let j = 0; j < matrix[i].length; j++) {
+    console.log(matrix[i][j]);
+  }
+}
+
+// Using forEach for 2D arrays
+matrix.forEach(row => {
+  row.forEach(element => {
+    console.log(element);
+  });
+});
+
+// Common 2D array operations
+// Sum all elements
+let sum = 0;
+for (let i = 0; i < matrix.length; i++) {
+  for (let j = 0; j < matrix[i].length; j++) {
+    sum += matrix[i][j];
+  }
+}
+// sum = 45`}
+                              </code>
+                            </pre>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              5. Common Array Algorithms
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// Binary search (for sorted arrays)
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    
+    if (arr[mid] === target) {
+      return mid; // Found the target
+    } else if (arr[mid] < target) {
+      left = mid + 1; // Search in the right half
+    } else {
+      right = mid - 1; // Search in the left half
+    }
+  }
+  
+  return -1; // Target not found
+}
+
+// Merge two sorted arrays
+function mergeSortedArrays(arr1, arr2) {
+  const merged = [];
+  let i = 0, j = 0;
+  
+  while (i < arr1.length && j < arr2.length) {
+    if (arr1[i] <= arr2[j]) {
+      merged.push(arr1[i]);
+      i++;
+    } else {
+      merged.push(arr2[j]);
+      j++;
+    }
+  }
+  
+  // Add remaining elements
+  while (i < arr1.length) merged.push(arr1[i++]);
+  while (j < arr2.length) merged.push(arr2[j++]);
+  
+  return merged;
+}`}
+                              </code>
+                            </pre>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              6. String Pattern Matching
+                            </h3>
+                            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                              <code className="text-sm">
+                                {`// Regular expressions for pattern matching
+const text = "Email me at john@example.com or visit my website at https://example.com";
+
+// Match email addresses
+const emailRegex = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
+const emails = text.match(emailRegex); // ["john@example.com"]
+
+// Match URLs
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+const urls = text.match(urlRegex); // ["https://example.com"]
+
+// String validation
+function isValidEmail(email) {
+  const regex = /^[\w.+-]+@[\w-]+\.[\w.-]+$/;
+  return regex.test(email);
+}
+
+// isValidEmail("john@example.com") => true
+// isValidEmail("invalid-email") => false
+
+// Check if string is palindrome
+function isPalindrome(str) {
+  const cleanStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const reversed = cleanStr.split('').reverse().join('');
+  return cleanStr === reversed;
+}
+
+// isPalindrome("A man, a plan, a canal: Panama") => true
+// isPalindrome("hello") => false`}
+                              </code>
+                            </pre>
+                          </div>
+                        </>
+                      ) : id === "2" ? (
+                        // Linked Lists cheat sheet
+                        <div className="p-4 bg-yellow-50 rounded-md">
+                          <p>
+                            Linked List cheat sheet content will be displayed
+                            here.
+                          </p>
+                        </div>
+                      ) : id === "3" ? (
+                        // Stacks and Queues cheat sheet
+                        <div className="p-4 bg-blue-50 rounded-md">
+                          <p>
+                            Stacks and Queues cheat sheet content will be
+                            displayed here.
+                          </p>
+                        </div>
+                      ) : id === "9" ? (
+                        // Dynamic Programming cheat sheet
+                        <div className="p-4 bg-purple-50 rounded-md">
+                          <p>
+                            Dynamic Programming cheat sheet content will be
+                            displayed here.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-gray-50 rounded-md">
+                          <p>Cheat sheet for this topic is coming soon.</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : null}
+
               <Card className="bg-white">
                 <CardHeader>
                   <CardTitle>Introduction to {topicData.title}</CardTitle>
@@ -401,6 +731,47 @@ const TopicDetail = ({ id: propId }: TopicDetailProps) => {
                     This section provides a comprehensive introduction to{" "}
                     {topicData.title}, covering fundamental concepts,
                     implementation details, and common operations.
+                  </p>
+                  <p className="mb-4">
+                    {id === "1" ? (
+                      <>
+                        Arrays are contiguous blocks of memory that store
+                        elements of the same type. They provide O(1) access time
+                        for elements by index, making them efficient for random
+                        access. Strings are essentially arrays of characters
+                        with special operations for text manipulation.
+                      </>
+                    ) : id === "2" ? (
+                      <>
+                        Linked Lists consist of nodes where each node contains
+                        data and a reference to the next node. Unlike arrays,
+                        linked lists don't require contiguous memory allocation,
+                        making insertions and deletions more efficient,
+                        especially at the beginning of the list.
+                      </>
+                    ) : id === "3" ? (
+                      <>
+                        Stacks follow the Last-In-First-Out (LIFO) principle,
+                        where the last element added is the first one to be
+                        removed. Queues follow the First-In-First-Out (FIFO)
+                        principle, where the first element added is the first
+                        one to be removed.
+                      </>
+                    ) : id === "9" ? (
+                      <>
+                        Dynamic Programming is a method for solving complex
+                        problems by breaking them down into simpler subproblems.
+                        It's applicable when the problem has overlapping
+                        subproblems and optimal substructure properties.
+                      </>
+                    ) : (
+                      <>
+                        This data structure provides specific advantages for
+                        certain types of operations and use cases. Understanding
+                        its properties helps in selecting the right data
+                        structure for your specific programming needs.
+                      </>
+                    )}
                   </p>
                   <p>
                     Content for the learning section would be displayed here,
