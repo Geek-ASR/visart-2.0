@@ -56,13 +56,12 @@ const WorkshopDetail = ({
   }
 
   const handleEnrollClick = () => {
-    if (workshop.isPaid || isAuthorized) {
-      // For paid workshops or if user is authorized, proceed directly
-      // In a real app, this would redirect to payment or enrollment confirmation
-      console.log("Proceeding with enrollment or payment");
+    if (workshop.isPaid) {
+      // For paid workshops, show payment dialog
+      alert(`You are now being redirected to payment for ${workshop.price}`);
     } else {
-      // For free workshops, check if user is authorized to conduct
-      setShowAuthDialog(true);
+      // For free workshops, show enrollment confirmation
+      alert("You have successfully enrolled in this free workshop!");
     }
   };
 
@@ -71,7 +70,9 @@ const WorkshopDetail = ({
       // Logic for authorized users to conduct the workshop
       console.log("Conducting workshop as authorized user");
       // In a real app, this would redirect to workshop management page
-      navigate(`/conduct-workshop/${workshop.id}`);
+      alert(
+        "You are now conducting this workshop as an authorized instructor!",
+      );
     } else {
       setShowAuthDialog(true);
     }

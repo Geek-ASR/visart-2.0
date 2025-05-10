@@ -90,7 +90,7 @@ function App() {
             }
           />
           <Route
-            path="/blogs"
+            path="/blogs/*"
             element={
               <Layout>
                 <Suspense

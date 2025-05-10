@@ -63,7 +63,7 @@ const BlogDetail = ({ posts = mockBlogPosts }: BlogDetailProps) => {
           <span>{post.readTime}</span>
         </div>
 
-        <div className="prose max-w-none mb-8">
+        <div className="prose max-w-none mb-8 prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md">
           {post.content ? (
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           ) : (
