@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Code, DollarSign } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export interface Workshop {
   id: string;
@@ -92,6 +93,7 @@ export const mockWorkshops: Workshop[] = [
 ];
 
 const Workshop = ({ workshops = mockWorkshops }: WorkshopProps) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-background">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -164,8 +166,11 @@ const Workshop = ({ workshops = mockWorkshops }: WorkshopProps) => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button>
-                {workshop.isPaid ? "Enroll Now" : "Register Free"}
+              <Button
+                onClick={() => navigate(`/workshop/${workshop.id}`)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 transform hover:scale-105"
+              >
+                View Details
               </Button>
             </CardFooter>
           </Card>

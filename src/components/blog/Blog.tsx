@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export interface BlogPost {
   id: string;
@@ -80,6 +81,7 @@ export const mockBlogPosts: BlogPost[] = [
 ];
 
 const Blog = ({ posts = mockBlogPosts }: BlogProps) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-background">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,7 +128,12 @@ const Blog = ({ posts = mockBlogPosts }: BlogProps) => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline">Read More</Button>
+              <Button
+                onClick={() => navigate(`/blog/${post.id}`)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 transform hover:scale-105"
+              >
+                Read More
+              </Button>
             </CardFooter>
           </Card>
         ))}
