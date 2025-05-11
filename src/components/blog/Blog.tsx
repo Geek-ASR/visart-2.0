@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Calendar } from "lucide-react";
+import { Clock, Calendar, Search, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 
 export interface BlogPost {
   id: string;
@@ -219,61 +220,154 @@ const graph = [
 
 const Blog = ({ posts = mockBlogPosts }: BlogProps) => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  // Get all unique tags from posts
+  const allTags = Array.from(
+    new Set(posts.flatMap((post) => post.tags)),
+  ).sort();
+
+  // Filter posts based on search term and selected tag
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.author.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesTag = selectedTag === null || post.tags.includes(selectedTag);
+
+    return matchesSearch && matchesTag;
+  });
+
   return (
     <div className="bg-background">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {posts.map((post) => (
-          <Card
-            key={post.id}
-            className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="h-48 overflow-hidden">
-              <img
-                src={post.imageUrl}
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-xl font-bold">
-                  {post.title}
-                </CardTitle>
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                <span>{post.author}</span>
-                <div className="flex items-center">
-                  <Calendar size={14} className="mr-1" />
-                  <span>{post.date}</span>
-                </div>
-                <div className="flex items-center">
-                  <Clock size={14} className="mr-1" />
-                  <span>{post.readTime}</span>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-base">
-                {post.summary}
-              </CardDescription>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                onClick={() => navigate(`/blog/${post.id}`)}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 transform hover:scale-105"
+      {/* Search and Filter Section */}
+      <div className="mb-6 space-y-4">
+        <div className="relative">
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={18}
+          />
+          <Input
+            placeholder="Search articles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <Tag size={16} className="text-muted-foreground" />
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              variant={selectedTag === null ? "default" : "outline"}
+              className="cursor-pointer hover:bg-primary/90"
+              onClick={() => setSelectedTag(null)}
+            >
+              All
+            </Badge>
+            {allTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant={selectedTag === tag ? "default" : "outline"}
+                className="cursor-pointer hover:bg-primary/90"
+                onClick={() => setSelectedTag(tag)}
               >
-                Read More
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Results count */}
+      <div className="mb-4 text-sm text-muted-foreground">
+        {filteredPosts.length}{" "}
+        {filteredPosts.length === 1 ? "article" : "articles"} found
+      </div>
+
+      {/* Blog Posts Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <Card
+              key={post.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+            >
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={post.imageUrl}
+                  alt={post.title}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-xl font-bold">
+                    {post.title}
+                  </CardTitle>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                  <span>{post.author}</span>
+                  <div className="flex items-center">
+                    <Calendar size={14} className="mr-1" />
+                    <span>{post.date}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock size={14} className="mr-1" />
+                    <span>{post.readTime}</span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base">
+                  {post.summary}
+                </CardDescription>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {post.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTag(tag);
+                      }}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  onClick={() => navigate(`/blog/${post.id}`)}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 transform hover:scale-105"
+                >
+                  Read More
+                </Button>
+              </CardFooter>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-2 text-center py-12">
+            <p className="text-lg text-muted-foreground">
+              No articles found matching your criteria.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedTag(null);
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
